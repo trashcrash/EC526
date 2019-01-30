@@ -89,20 +89,46 @@ int main(int argc, char** argv)
 
     printf("Calculate reference solution and time with serial CPU execution.\n");
     start = get_time();
+
+    //This sets up a "gold standard" reference calculation.
     poisson2d_reference( iter_max, tol, Aref, Anew, nx, ny, rhs );
     double runtime_ref = get_time() - start;
 
     printf("Calculate current execution.\n");
     start = get_time();
+
     int iter  = 0;
     real error = 1.0;
 
+    // The 'data' clause in the pragma indicates that we are declaring memory on the GPU. Three types
+    // of clause are listed:
+    //
+    //     1. copy(A[0:nx*ny])      The 'copy' clause tells the compiler that it should copy the HOST
+    //                              data in the A array to the GPU at the start of teh caluclation, and
+    //                              it is also to copy the data in the GPU back to the host at the end of the
+    //                              calculation
+    //
+    //     2. copyin(rhs[0:nx*ny])  The 'copyin' clause tells the compiler to copy the data from
+    //                              the HOST to the GPU at the start, but it should not copy the data in the GPU back
+    //                              to the host at the end. Can you guess what the opposite clause would be?
+    //                              To not copy the HOST data to the GPU at the start, but to copy from the GPU to the HOST
+    //                              at the end?
+    //
+    //     3. create(Anew[0:nx*ny]) The 'create' clause simply creates memory on the device. No data transfer
+    //                              is performed for this array
 #pragma acc data copy(A[0:nx*ny]) copyin(rhs[0:nx*ny]) create(Anew[0:nx*ny])
     while ( error > tol && iter < iter_max ) {
       
       error = 0.0;
       
       // Jacobi kernel
+      // Here we see a familar 'parallel loop', telling the compiler that
+      // each iteration of the loop may be performed independnly. We also
+      // see the same 'reduction' clause from the integrate.cpp file, but
+      // this time instead of a sum, it is returning the maximum value.
+      // We can see this from the 'max' keyword in the reduction clause.
+      // PGI will make a note of all the values of 'error' on each thread
+      // then discern that largest one and reurn that value
 #pragma acc parallel loop reduction(max:error)
       for (int iy = iy_start; iy < iy_end; iy++) {
 	for (int ix = ix_start; ix < ix_end; ix++) {
@@ -121,7 +147,7 @@ int main(int argc, char** argv)
 	  A[iy*nx+ix] = Anew[iy*nx+ix];
 	}
       }
-	
+      
       //Periodic boundary conditions
 #pragma acc parallel loop
       for (int ix = ix_start; ix < ix_end; ix++) {

@@ -15,8 +15,6 @@ else ifeq ($(ACCEL_TYPE),PGI-multicore)
 	CFLAGS += -Minfo=accel -fast -acc -ta=multicore
 endif
 
-#all: poisson2d_v0 poisson2d_v1 poisson2d_v2 poisson2d_v3
-
 v0: poisson2d_v0
 v1: poisson2d_v1
 v2: poisson2d_v2
