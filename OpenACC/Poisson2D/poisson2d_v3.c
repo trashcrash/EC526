@@ -41,18 +41,18 @@ int main(int argc, char** argv)
     int nx = 2048;
     int iter_max = 100;
     const real tol = 1.0e-5;
-
+    
     if (argc >= 2) iter_max = atoi( argv[1] );
 
     if (argc == 3) {
-        ny = atoi( argv[2] );
-        nx = ny;
+      ny = atoi( argv[2] );
+      nx = ny;
     }
     if (argc == 4) {
-        ny = atoi( argv[2] );
-        nx = atoi( argv[3] );
+      ny = atoi( argv[2] );
+      nx = atoi( argv[3] );
     }
-
+    
     real* restrict const A    = (real*) malloc(nx*ny*sizeof(real));
     real* restrict const Aref = (real*) malloc(nx*ny*sizeof(real));
     real* restrict const Anew = (real*) malloc(nx*ny*sizeof(real));
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
     
     int ix_start = 1;
     int ix_end   = (nx - 1);
-
+    
     int iy_start = 1;
     int iy_end   = (ny - 1);
     
@@ -82,21 +82,21 @@ int main(int argc, char** argv)
     }
     
     // OpenACC Init / Warm-Up
-    #pragma acc init
+#pragma acc init
     
     double start;  // Time measurements
     printf("Jacobi relaxation calculation: max %d iterations on %d x %d mesh\n", iter_max, ny, nx);
-
+    
     printf("Calculate reference solution and time with serial CPU execution.\n");
     start = get_time();
-
+    
     //This sets up a "gold standard" reference calculation.
     poisson2d_reference( iter_max, tol, Aref, Anew, nx, ny, rhs );
     double runtime_ref = get_time() - start;
-
+    
     printf("Calculate current execution.\n");
     start = get_time();
-
+    
     int iter  = 0;
     real error = 1.0;
 
@@ -132,7 +132,12 @@ int main(int argc, char** argv)
 #pragma acc parallel loop reduction(max:error)
       for (int iy = iy_start; iy < iy_end; iy++) {
 	for (int ix = ix_start; ix < ix_end; ix++) {
-	  
+
+	  //The number we wish to compute depends on its nieghbours. This
+	  //would usually be a disaster for parallel programming, but we
+	  //use a temporary array 'Anew' to store the results, leaving the
+	  //original array 'A' untouched. This means that each update to 'Anew'
+	  //is independent and we can parallelise.
 	  Anew[iy*nx+ix] = -0.25 * (rhs[iy*nx+ix] - (A[iy*nx+ix+1] + A[iy*nx+ix-1]
 						     + A[(iy-1)*nx+ix] + A[(iy+1)*nx+ix] ));
 	  
@@ -144,6 +149,10 @@ int main(int argc, char** argv)
 #pragma acc parallel loop
       for (int iy = iy_start; iy < iy_end; iy++) {
 	for( int ix = ix_start; ix < ix_end; ix++ ) {
+
+	  //A simple update of the field A, now that we
+	  //have performed the Jacobi step. Notice that we do
+	  //not update the boundaries... yet.
 	  A[iy*nx+ix] = Anew[iy*nx+ix];
 	}
       }
@@ -163,7 +172,8 @@ int main(int argc, char** argv)
       if((iter % 100) == 0) printf("%5d, %0.6f\n", iter, error);
       
       iter++;
-    }
+      
+    } 
     
     double runtime = get_time() - start;
     
