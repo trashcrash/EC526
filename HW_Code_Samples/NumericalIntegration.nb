@@ -1,0 +1,598 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     20913,        589]
+NotebookOptionsPosition[     18800,        515]
+NotebookOutlinePosition[     19154,        531]
+CellTagsIndexPosition[     19111,        528]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["\<\
+Here\[CloseCurlyQuote]s a notebook on Numerical Integration to support Rich \
+Brower\[CloseCurlyQuote]s High Performance Computing class. Prepared by Evan \
+S Weinberg. 2/1/2016 and Modified by Rich Brower 2/2/2019\
+\>", "Text",
+ CellChangeTimes->{{3.6633378659095974`*^9, 3.6633378893336782`*^9}, {
+  3.758152938991962*^9, 3.758152960117062*^9}}],
+
+Cell[TextData[{
+ "This notebook will compute the 1D integral of a user-specified function on \
+a user supplied interval, both exactly using ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ "\[CloseCurlyQuote]s built in functions, and explicitly using different \
+integration rules with a specified number of sub-intervals."
+}], "Text",
+ CellChangeTimes->{{3.663337920951576*^9, 3.66333795817763*^9}}],
+
+Cell["Specify the function:", "Text",
+ CellChangeTimes->{{3.663337962117622*^9, 3.663337964652074*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"func", "[", "x_", "]"}], ":=", 
+  RowBox[{"Sin", "[", "x", "]"}]}]], "Input",
+ CellChangeTimes->{{3.6633379656377993`*^9, 3.6633379694729652`*^9}, {
+  3.663339018780885*^9, 3.6633390500481772`*^9}, {3.663339092073743*^9, 
+  3.6633390990064993`*^9}, {3.6633391326090508`*^9, 3.6633391796905727`*^9}, {
+  3.6633393330333977`*^9, 3.6633393766017094`*^9}, {3.6633394210414686`*^9, 
+  3.6633394218266*^9}, {3.6633396382492943`*^9, 3.6633396404486303`*^9}, {
+  3.6633398438168373`*^9, 3.663339844548933*^9}}],
+
+Cell["What is the lower and upper limit of the integral?", "Text",
+ CellChangeTimes->{{3.6633379774367294`*^9, 3.6633379837591887`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"xmin", " ", "=", " ", "0"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"xmax", " ", "=", " ", "1"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.6633379844607162`*^9, 3.6633379973642683`*^9}, {
+  3.663339069275313*^9, 3.6633390813343353`*^9}, {3.6633396537903585`*^9, 
+  3.66333965442197*^9}, {3.6633396952012677`*^9, 3.663339695332607*^9}, {
+  3.663339780158725*^9, 3.6633398053233576`*^9}, {3.6633398468848*^9, 
+  3.663339847934589*^9}, {3.758152680905051*^9, 3.758152703176239*^9}}],
+
+Cell["\<\
+How many sub-intervals should we use for numerical integration?\
+\>", "Text",
+ CellChangeTimes->{{3.6633380332996597`*^9, 3.663338041604457*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ninterval", " ", "=", "10"}]], "Input",
+ CellChangeTimes->{{3.663338042474353*^9, 3.6633380453757095`*^9}, 
+   3.663339166727271*^9, {3.7581523831354723`*^9, 3.758152384629799*^9}, {
+   3.758152705271862*^9, 3.7581527063194838`*^9}, {3.758153398494643*^9, 
+   3.7581533993737497`*^9}, {3.758153456723317*^9, 3.7581534581152897`*^9}, {
+   3.75815365821036*^9, 3.758153682288022*^9}}],
+
+Cell[BoxData["10"], "Output",
+ CellChangeTimes->{
+  3.758152388865922*^9, {3.758152659939587*^9, 3.7581527126579857`*^9}, 
+   3.7581528021141653`*^9, 3.758152883663898*^9, 3.758152980983376*^9, 
+   3.75815303641289*^9, 3.758153293087146*^9, {3.758153389346345*^9, 
+   3.75815340369774*^9}, 3.758153471653653*^9, 3.758153535074409*^9, 
+   3.758153579173395*^9, {3.758153636480466*^9, 3.758153686199996*^9}}]
+}, Open  ]],
+
+Cell["\<\
+The lower and upper limits combined with the number of intervals gives the \
+step size.\
+\>", "Text",
+ CellChangeTimes->{{3.6633380500935545`*^9, 3.6633380694754066`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"h", "=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"xmax", "-", "xmin"}], ")"}], "/", "ninterval"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.663338070808791*^9, 3.663338080130992*^9}}],
+
+Cell[TextData[{
+ "First, let\[CloseCurlyQuote]s compute the exact integral with built-in ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " functions. The function \[OpenCurlyDoubleQuote]NumberForm\
+\[CloseCurlyDoubleQuote] forces more output digits."
+}], "Text",
+ CellChangeTimes->{{3.6633380954923444`*^9, 3.663338134672165*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"exactAnswer", "=", 
+    RowBox[{"Integrate", "[", 
+     RowBox[{
+      RowBox[{"func", "[", "x", "]"}], ",", " ", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", " ", "xmin", ",", " ", "xmax"}], "}"}]}], "]"}]}], 
+   ";"}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.663338107428746*^9, 3.6633381253205743`*^9}, {
+   3.663338459220833*^9, 3.663338467288144*^9}, {3.663338839778324*^9, 
+   3.6633388557053685`*^9}, {3.6633390294498873`*^9, 3.66333902978732*^9}, 
+   3.6633391211560183`*^9, {3.758153027005389*^9, 3.758153027476734*^9}, {
+   3.758153081467263*^9, 3.758153081810176*^9}, 3.758153144620195*^9, {
+   3.758153213024437*^9, 3.758153213935678*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"N", "[", "exactAnswer", "]"}]], "Input",
+ CellChangeTimes->{{3.7581532162870903`*^9, 3.758153220525609*^9}},
+ NumberMarks->False],
+
+Cell[BoxData["0.45969769413186023`"], "Output",
+ CellChangeTimes->{
+  3.7581532931523733`*^9, {3.758153389401971*^9, 3.758153403809546*^9}, 
+   3.758153471711689*^9, 3.7581535351244917`*^9, 3.758153579249811*^9, {
+   3.758153636526738*^9, 3.7581536862705517`*^9}}]
+}, Open  ]],
+
+Cell["Next, we\[CloseCurlyQuote]ll use the trapezoidal rule.", "Text",
+ CellChangeTimes->{{3.6633381422173624`*^9, 3.663338147537257*^9}, {
+  3.66333819889436*^9, 3.663338199010004*^9}, {3.6633382417228384`*^9, 
+  3.66333824207043*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"trapAnswer", "=", 
+   RowBox[{"Sum", "[", 
+    RowBox[{
+     RowBox[{"N", "[", 
+      RowBox[{
+       RowBox[{"h", "/", "2"}], "*", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"func", "[", 
+          RowBox[{"xmin", "+", 
+           RowBox[{"i", "*", "h"}]}], "]"}], "+", 
+         RowBox[{"func", "[", 
+          RowBox[{"xmin", "+", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"i", "+", "1"}], ")"}], "*", "h"}]}], "]"}]}], ")"}]}], 
+      "]"}], ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", " ", "0", ",", " ", 
+       RowBox[{"ninterval", "-", "1"}]}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"NumberForm", "[", 
+  RowBox[{"trapAnswer", ",", "15"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.6633381523617735`*^9, 3.6633381924889936`*^9}, {
+  3.6633384696891994`*^9, 3.663338471306221*^9}, {3.6633388594696317`*^9, 
+  3.6633388692594643`*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  InterpretationBox["\<\"0.459314548857976\"\>",
+   0.4593145488579764,
+   AutoDelete->True],
+  NumberForm[#, 15]& ]], "Output",
+ CellChangeTimes->{
+  3.7581532931969137`*^9, {3.7581533894498253`*^9, 3.7581534038519583`*^9}, 
+   3.758153471761003*^9, 3.758153535154531*^9, 3.7581535792795897`*^9, {
+   3.758153636572124*^9, 3.758153686304532*^9}}]
+}, Open  ]],
+
+Cell["\<\
+Now we\[CloseCurlyQuote]ll hop to Simpson\[CloseCurlyQuote]s rule. Simpson\
+\[CloseCurlyQuote]s rule uses intervals of length \[OpenCurlyDoubleQuote]2h\
+\[CloseCurlyDoubleQuote], so you may get weird results if \
+\[OpenCurlyDoubleQuote]ninterval\[CloseCurlyDoubleQuote] is odd!\
+\>", "Text",
+ CellChangeTimes->{{3.663338252261502*^9, 3.6633382965391245`*^9}, {
+  3.6633389898756466`*^9, 3.6633389957659283`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"simpAnswer", "=", 
+   RowBox[{"Sum", "[", 
+    RowBox[{
+     RowBox[{"N", "[", 
+      RowBox[{
+       RowBox[{"h", "/", "3"}], "*", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"func", "[", 
+          RowBox[{"xmin", "+", 
+           RowBox[{"2", " ", "i", " ", "h"}]}], "]"}], "+", 
+         RowBox[{"4", "*", 
+          RowBox[{"func", "[", 
+           RowBox[{"xmin", "+", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"2", " ", "i"}], "+", "1"}], ")"}], "*", "h"}]}], 
+           "]"}]}], "+", 
+         RowBox[{"func", "[", 
+          RowBox[{"xmin", "+", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"2", " ", "i"}], "+", "2"}], ")"}], "*", "h"}]}], 
+          "]"}]}], ")"}]}], "]"}], ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", " ", "0", ",", " ", 
+       RowBox[{
+        RowBox[{"ninterval", "/", "2"}], "-", "1"}]}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"NumberForm", "[", 
+  RowBox[{"simpAnswer", ",", "15"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.663338297972026*^9, 3.6633383694018307`*^9}, {
+  3.663338427785078*^9, 3.6633384767462807`*^9}, {3.6633388748788414`*^9, 
+  3.6633388867058516`*^9}, {3.758152481697566*^9, 3.758152504048235*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  InterpretationBox["\<\"0.459697949823821\"\>",
+   0.4596979498238205,
+   AutoDelete->True],
+  NumberForm[#, 15]& ]], "Output",
+ CellChangeTimes->{
+  3.7581532932506313`*^9, {3.758153389499639*^9, 3.7581534039188967`*^9}, 
+   3.758153471812296*^9, 3.7581535352060747`*^9, 3.758153579315851*^9, {
+   3.7581536366224003`*^9, 3.758153686353436*^9}}]
+}, Open  ]],
+
+Cell["\<\
+Last, we\[CloseCurlyQuote]ll use Gaussian quadrature with 3 points per \
+interval. This uses the \[OpenCurlyDoubleQuote]change of interval\
+\[CloseCurlyDoubleQuote] equation from the \[OpenCurlyDoubleQuote]Gaussian \
+quadrature\[CloseCurlyDoubleQuote] Wikipedia article, where the \
+\[OpenCurlyDoubleQuote]w_i\[CloseCurlyDoubleQuote] and \
+\[OpenCurlyDoubleQuote]x_i\[CloseCurlyDoubleQuote] come from the \
+Gauss-Legendre quadrature table.\
+\>", "Text",
+ CellChangeTimes->{{3.663338592170699*^9, 3.663338604802831*^9}, {
+  3.6633392139411464`*^9, 3.663339291584401*^9}}],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.663338581088543*^9, 3.663338744264908*^9}, {
+   3.663338891856962*^9, 3.663338903262246*^9}, 3.758152738328638*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"gaussAnswer", "=", 
+   RowBox[{"Sum", "[", 
+    RowBox[{
+     RowBox[{"N", "[", 
+      RowBox[{"h", "*", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"5", "/", "9"}], "*", 
+          RowBox[{"func", "[", 
+           RowBox[{"xmin", "+", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"2", " ", "i"}], "+", "1"}], ")"}], "*", "h"}], "-", 
+            RowBox[{
+             RowBox[{"Sqrt", "[", 
+              RowBox[{"3", "/", "5"}], "]"}], "*", "h"}]}], "]"}]}], "+", 
+         RowBox[{
+          RowBox[{"8", "/", "9"}], "*", 
+          RowBox[{"func", "[", 
+           RowBox[{"xmin", "+", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"2", " ", "i"}], " ", "+", "1"}], ")"}], "*", "h"}]}], 
+           "]"}]}], "+", 
+         RowBox[{
+          RowBox[{"5", "/", "9"}], "*", 
+          RowBox[{"func", "[", 
+           RowBox[{"xmin", "+", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"2", " ", "i"}], " ", "+", "1"}], ")"}], "*", "h"}], 
+            "+", 
+            RowBox[{
+             RowBox[{"Sqrt", "[", 
+              RowBox[{"3", "/", "5"}], "]"}], "*", "h"}]}], "]"}]}]}], 
+        ")"}]}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "0", ",", 
+       RowBox[{
+        RowBox[{"ninterval", "/", "2"}], "-", "1"}]}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"NumberForm", "[", 
+  RowBox[{"gaussAnswer", ",", "15"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.7581521042191257`*^9, 3.758152201005763*^9}, {
+  3.758152247574657*^9, 3.758152258084525*^9}, {3.758152645850731*^9, 
+  3.758152653866199*^9}, {3.7581527303043337`*^9, 3.758152732639749*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  InterpretationBox["\<\"0.459697694146474\"\>",
+   0.45969769414647377`,
+   AutoDelete->True],
+  NumberForm[#, 15]& ]], "Output",
+ CellChangeTimes->{
+  3.758153293325366*^9, {3.758153389565494*^9, 3.758153403984024*^9}, 
+   3.75815347186489*^9, 3.758153535272195*^9, 3.758153579382517*^9, {
+   3.758153636688212*^9, 3.758153686402795*^9}}]
+}, Open  ]],
+
+Cell["Let\[CloseCurlyQuote]s compare the relative errors.", "Text",
+ CellChangeTimes->{{3.6633387720160823`*^9, 3.663338776404668*^9}}],
+
+Cell["Trapezoidal:", "Text",
+ CellChangeTimes->{{3.663338793555792*^9, 3.663338795954285*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"trapAnswer", "-", "exactAnswer"}], ")"}], "/", 
+  "exactAnswer"}]], "Input",
+ CellChangeTimes->{{3.663338803360675*^9, 3.663338821247116*^9}, {
+  3.6633389202386293`*^9, 3.663338921625062*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.0008334722552990048`"}]], "Output",
+ CellChangeTimes->{
+  3.7581532933677197`*^9, {3.7581533895913773`*^9, 3.758153404033251*^9}, 
+   3.758153471910304*^9, 3.758153535303842*^9, 3.7581535794113493`*^9, {
+   3.7581536367193527`*^9, 3.758153686463924*^9}}]
+}, Open  ]],
+
+Cell["Simpsons:", "Text",
+ CellChangeTimes->{{3.663338928527956*^9, 3.663338930077742*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"simpAnswer", "-", "exactAnswer"}], ")"}], "/", 
+  "exactAnswer"}]], "Input",
+ CellChangeTimes->{{3.663338931346828*^9, 3.6633389359630785`*^9}}],
+
+Cell[BoxData["5.562176263561533`*^-7"], "Output",
+ CellChangeTimes->{
+  3.758153293417622*^9, {3.7581533896320972`*^9, 3.758153404084585*^9}, 
+   3.758153471964642*^9, 3.75815353535942*^9, 3.7581535794517603`*^9, {
+   3.758153636775721*^9, 3.7581536865163527`*^9}}]
+}, Open  ]],
+
+Cell["Gaussian quadrature:", "Text",
+ CellChangeTimes->{{3.663338941967224*^9, 3.663338944083786*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"gaussAnswer", "-", "exactAnswer"}], ")"}], "/", 
+  "exactAnswer"}]], "Input",
+ CellChangeTimes->{3.7581522943803253`*^9, 3.7581527573340683`*^9}],
+
+Cell[BoxData["3.178944074068334`*^-11"], "Output",
+ CellChangeTimes->{
+  3.75815329346811*^9, {3.758153389687214*^9, 3.758153404133072*^9}, 
+   3.7581534720128593`*^9, 3.758153535409836*^9, 3.758153579503393*^9, {
+   3.758153636824727*^9, 3.758153686566636*^9}}]
+}, Open  ]],
+
+Cell["\<\
+You\[CloseCurlyQuote]ll see that Gaussian quadrature does really well, even \
+with a small number of intervals! I started using just 10 on (0,1). Play \
+around with some other functions. Some good exercises include:
+ - x^n. Start from n = 1, and keep increasing n. At what values of \
+\[OpenCurlyDoubleQuote]n\[CloseCurlyDoubleQuote] do the approximate integrals \
+stop giving the exact answer?
+ - 4/(1+x^2) on the interval (0,1). What are we approximating? (Hint: look at \
+the exact answer!)
+ - Set the lower limit to 10^(-1) (keep the upper as 1), and try integrating \
+cos(1/x). How good are the approximations if you change the lower limit to \
+10^(-2)? 10^(-3)? Why is it so difficult to numerically integrate cos(1/x)?
+ 
+ For fun can try overlapping the Gaussian intervals with h/2 to get an even \
+better form.\
+\>", "Text",
+ CellChangeTimes->{{3.6633393932268744`*^9, 3.6633394428220186`*^9}, {
+  3.6633394846104*^9, 3.663339626408455*^9}, {3.6633396689150467`*^9, 
+  3.663339772797946*^9}, {3.663339816043304*^9, 3.6633398356946077`*^9}, {
+  3.663428483816725*^9, 3.6634284868145247`*^9}, {3.758151362189842*^9, 
+  3.758151365747311*^9}, {3.758151399130568*^9, 3.758151409890216*^9}, {
+  3.758153316171195*^9, 3.758153369695113*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"ninterval", "  ", "=", " ", 
+    RowBox[{"ninterval", "/", "2"}]}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"h", "=", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"xmax", "-", "xmin"}], ")"}], "/", "ninterval"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"gaussAnswerOverlapping", "=", 
+     RowBox[{"Sum", "[", 
+      RowBox[{
+       RowBox[{"N", "[", 
+        RowBox[{
+         RowBox[{"h", "/", "2"}], "*", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"5", "/", "9"}], "*", 
+            RowBox[{"func", "[", 
+             RowBox[{"xmin", "+", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"i", "+", "0.5"}], ")"}], "*", "h"}], "-", 
+              RowBox[{
+               RowBox[{"Sqrt", "[", 
+                RowBox[{"3", "/", "5"}], "]"}], "*", 
+               RowBox[{"h", "/", "2"}]}]}], "]"}]}], "+", 
+           RowBox[{
+            RowBox[{"8", "/", "9"}], "*", 
+            RowBox[{"func", "[", 
+             RowBox[{"xmin", "+", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"i", "+", "0.5"}], ")"}], "*", "h"}]}], "]"}]}], "+", 
+           RowBox[{
+            RowBox[{"5", "/", "9"}], "*", 
+            RowBox[{"func", "[", 
+             RowBox[{"xmin", "+", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"i", "+", "0.5"}], ")"}], "*", "h"}], "+", 
+              RowBox[{
+               RowBox[{"Sqrt", "[", 
+                RowBox[{"3", "/", "5"}], "]"}], "*", 
+               RowBox[{"h", "/", "2"}]}]}], "]"}]}]}], ")"}]}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "0", ",", 
+         RowBox[{"ninterval", "-", "1"}]}], "}"}]}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"NumberForm", "[", 
+    RowBox[{"gaussAnswerOverlapping", ",", "15"}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.758152741934347*^9, 3.7581527726682453`*^9}, {
+  3.7581534943234*^9, 3.7581535288570213`*^9}, {3.75815357380914*^9, 
+  3.758153574672194*^9}, {3.7581536234682217`*^9, 3.758153632273684*^9}}],
+
+Cell[BoxData["5"], "Output",
+ CellChangeTimes->{{3.7581533897366037`*^9, 3.758153404184437*^9}, 
+   3.758153472065374*^9, 3.758153535460322*^9, 3.758153579552163*^9, {
+   3.758153636886755*^9, 3.75815368663334*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  InterpretationBox["\<\"0.459697694146474\"\>",
+   0.4596976941464738,
+   AutoDelete->True],
+  NumberForm[#, 15]& ]], "Output",
+ CellChangeTimes->{{3.7581533897366037`*^9, 3.758153404184437*^9}, 
+   3.758153472065374*^9, 3.758153535460322*^9, 3.758153579552163*^9, {
+   3.758153636886755*^9, 3.758153686643982*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(", 
+   RowBox[{"gaussAnswerOverlapping", "-", "exactAnswer"}], ")"}], "/", 
+  "exactAnswer"}]], "Input",
+ CellChangeTimes->{{3.758152777108515*^9, 3.758152781443944*^9}}],
+
+Cell[BoxData["3.178968225223295`*^-11"], "Output",
+ CellChangeTimes->{{3.758153389785302*^9, 3.758153404249556*^9}, 
+   3.7581534721110773`*^9, 3.7581535355237913`*^9, 3.758153579616757*^9, {
+   3.7581536369390707`*^9, 3.758153686700108*^9}}]
+}, Open  ]]
+},
+WindowSize->{845, 750},
+WindowMargins->{{Automatic, 169}, {Automatic, 14}},
+FrontEndVersion->"10.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (July 6, \
+2015)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 357, 6, 49, "Text"],
+Cell[918, 28, 404, 8, 49, "Text"],
+Cell[1325, 38, 103, 1, 30, "Text"],
+Cell[1431, 41, 537, 9, 28, "Input"],
+Cell[1971, 52, 136, 1, 30, "Text"],
+Cell[2110, 55, 526, 9, 46, "Input"],
+Cell[2639, 66, 155, 3, 30, "Text"],
+Cell[CellGroupData[{
+Cell[2819, 73, 406, 6, 28, "Input"],
+Cell[3228, 81, 406, 6, 28, "Output"]
+}, Open  ]],
+Cell[3649, 90, 181, 4, 30, "Text"],
+Cell[3833, 96, 225, 7, 28, "Input"],
+Cell[4061, 105, 335, 7, 49, "Text"],
+Cell[4399, 114, 716, 15, 46, "Input"],
+Cell[CellGroupData[{
+Cell[5140, 133, 153, 3, 28, "Input"],
+Cell[5296, 138, 264, 4, 28, "Output"]
+}, Open  ]],
+Cell[5575, 145, 236, 3, 30, "Text"],
+Cell[CellGroupData[{
+Cell[5836, 152, 947, 27, 46, "Input"],
+Cell[6786, 181, 370, 9, 39, "Output"]
+}, Open  ]],
+Cell[7171, 193, 422, 7, 49, "Text"],
+Cell[CellGroupData[{
+Cell[7618, 204, 1333, 37, 63, "Input"],
+Cell[8954, 243, 370, 9, 39, "Output"]
+}, Open  ]],
+Cell[9339, 255, 580, 10, 49, "Text"],
+Cell[9922, 267, 164, 2, 28, "Input"],
+Cell[CellGroupData[{
+Cell[10111, 273, 1806, 51, 97, "Input"],
+Cell[11920, 326, 363, 9, 39, "Output"]
+}, Open  ]],
+Cell[12298, 338, 135, 1, 30, "Text"],
+Cell[12436, 341, 94, 1, 30, "Text"],
+Cell[CellGroupData[{
+Cell[12555, 346, 245, 6, 28, "Input"],
+Cell[12803, 354, 285, 5, 28, "Output"]
+}, Open  ]],
+Cell[13103, 362, 91, 1, 30, "Text"],
+Cell[CellGroupData[{
+Cell[13219, 367, 196, 5, 28, "Input"],
+Cell[13418, 374, 265, 4, 32, "Output"]
+}, Open  ]],
+Cell[13698, 381, 102, 1, 30, "Text"],
+Cell[CellGroupData[{
+Cell[13825, 386, 197, 5, 28, "Input"],
+Cell[14025, 393, 262, 4, 32, "Output"]
+}, Open  ]],
+Cell[14302, 400, 1253, 21, 182, "Text"],
+Cell[CellGroupData[{
+Cell[15580, 425, 2156, 57, 148, "Input"],
+Cell[17739, 484, 215, 3, 28, "Output"],
+Cell[17957, 489, 339, 8, 39, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18333, 502, 206, 5, 28, "Input"],
+Cell[18542, 509, 242, 3, 32, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
