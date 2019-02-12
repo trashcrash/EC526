@@ -26,7 +26,7 @@ WARNING: As an experiment I am apparently pushing this example
  beyond the ability of double precesion. Why? Not sure!
 *********************/
   
-  for(int Nintervals; Nintervals < 15; Nintervals++)
+  for(int Nintervals = 0; Nintervals < 15; Nintervals++)
     { N = 4*N;
     
   // Perform the integral
