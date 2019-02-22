@@ -100,8 +100,19 @@ int getLegendreCoeff(double* a, int n)
   {
     coeffs[m] = new double[m+1];
 
-    // Start filling up the coefficients.
+    // Start filling up the coefficients. Handle the 0th coefficient
+    // because of the "i-1"
     
+    coeffs[m][0] = -((double)m - 1.0)/m * coeffs[m-2][0];
+    for (int i = 1; i < m -1; i++)
+    {
+      //m = 3  i = 2 ==> 1/3
+      coeffs[m][i] = (1.0/(double)m)*( (2.0*m-1.0)*coeffs[m-1][i-1] - (m - 1.0)*coeffs[m-2][i] );
+    }
+    // i = m-1;
+    coeffs[m][ m-1] = (1.0/(double)m)*( (2.0*m-1.0)*coeffs[m-1][m-2]);
+    //int  i = m;
+    coeffs[m][m] = (1.0/(double)m)*( (2.0*m-1.0)*coeffs[m-1][m-1]);
   }
 
   // Copy the last row in
@@ -126,7 +137,12 @@ double evalPolynomial(double x, double* a, int n)
 {
   if (n == 0) { return a[0]; }
   double sum = a[0];
- 
+  double x_pow = x;
+  for (int i = 1; i <= n; i++)
+  {
+    sum += a[i]*x_pow;
+    x_pow *= x;
+  }
 
   return sum;
 }
@@ -137,7 +153,12 @@ double evalPolyDeriv(double x, double* a, int n)
   if (n == 0) { return 0; }
   if (n == 1) { return a[1]; }
   double sum = a[1];
-
+  double x_pow = x;
+  for (int i = 2; i <= n; i++)
+  {
+    sum += a[i]*i*x_pow;
+    x_pow *= x;
+  }
 
   return sum;
 }
@@ -149,7 +170,23 @@ int getLegendreZero(double* zero, double* a, int n)
 
   for (int i = 1; i <= n; i++)
   {
-  
+    std::cout << "Zero " << i << "\n";
+    // Get the approximate zero
+    double approx_zero = (1.0 - 1.0/(8.0*n*n) + 1.0/(8.0*n*n*n))*cos(M_PI*(4.0*i-1.0)/(4*n+2));
+    
+    // Here's a place to store a new guess.
+    double new_zero = approx_zero;
+    
+    // check that the approximate zero isn't too small and that we haven't hit tolerance
+    do
+    {
+      std::cout << new_zero << "\n";
+      approx_zero = new_zero;
+      new_zero = approx_zero - evalPolynomial(approx_zero,a,n)/evalPolyDeriv(approx_zero,a,n);
+    } while (new_zero > 1e-8 && fabs((approx_zero - new_zero)/approx_zero) > 1e-8);
+
+    // converged
+    zero[n-i] = new_zero;
   }
 
   return 0;
