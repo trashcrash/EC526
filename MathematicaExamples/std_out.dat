@@ -1,0 +1,32 @@
+scc1:brower/HW2 % ./integrate
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 4 intervals is 0.958944443317944 and error is 2.4953009027e-03 Quad error is 2.495300902661963179940407542290e-03 
+This took 0.00000808 seconds for double and  0.00000606 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 16 intervals is 0.956604832214123 and error is 1.5568979884e-04 Quad error is 1.556897988411030280594266050898e-04 
+This took 0.00000121 seconds for double and  0.00000127 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 64 intervals is 0.956458871988373 and error is 9.7295730910e-06 Quad error is 9.729573090736173688252916291752e-06 
+This took 0.00000880 seconds for double and  0.00000384 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 256 intervals is 0.956449750509541 and error is 6.0809425895e-07 Quad error is 6.080942586754110242447954673417e-07 
+This took 0.00000463 seconds for double and  0.00001312 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 1024 intervals is 0.956449180421159 and error is 3.8005876446e-08 Quad error is 3.800587531143952863442326130065e-08 
+This took 0.00001662 seconds for double and  0.00006754 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 4096 intervals is 0.956449144790650 and error is 2.3753675693e-09 Quad error is 2.375367144378113039892577867149e-09 
+This took 0.00008498 seconds for double and  0.00022082 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 16384 intervals is 0.956449142563739 and error is 1.4845713547e-10 Quad error is 1.484604461496502166743200336235e-10 
+This took 0.00031461 seconds for double and  0.00087421 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 65536 intervals is 0.956449142424569 and error is 9.2864604895e-12 Quad error is 9.278777972004248092359737713025e-12 
+This took 0.00114188 seconds for double and  0.00335627 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 262144 intervals is 0.956449142415861 and error is 5.7875926274e-13 Quad error is 5.799236016341257689502382934138e-13 
+This took 0.00447451 seconds for double and  0.01374827 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 1048576 intervals is 0.956449142415337 and error is 5.4956039719e-14 Quad error is 3.624518757765555787376736948878e-14 
+This took 0.01744544 seconds for double and  0.05519208 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 4194304 intervals is 0.956449142415300 and error is 1.8318679906e-14 Quad error is 2.265352423588922272576681768140e-15 
+This took 0.07040028 seconds for double and  0.21844508 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 16777216 intervals is 0.956449142415271 and error is 1.1546319456e-14 Quad error is 1.415880847493095681559260781781e-16 
+This took 0.29088537 seconds for double and  0.89154941 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 67108864 intervals is 0.956449142415314 and error is 3.1530333899e-14 Quad error is 8.853409555465103178629037307624e-18 
+This took 1.16981187 seconds for double and  3.61454391 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 268435456 intervals is 0.956449142416257 and error is 9.7455377102e-13 Quad error is 5.552407702224555465889500336512e-19 
+This took 4.60555473 seconds for double and  14.08925869 seconds for double quad 
+The integral from                               1.000000 to 2.00000000 of sin(x) usng 1073741824 intervals is 0.956449142422453 and error is 7.1707084714e-12 Quad error is 3.281407145170052370358073003101e-20 
+This took 18.26795925 seconds for double and  55.93965877 seconds for double quad 
+scc1:brower/HW2 % 
