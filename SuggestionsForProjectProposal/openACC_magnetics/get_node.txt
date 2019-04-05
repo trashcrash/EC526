@@ -1,0 +1,16 @@
+The commamd below will give you an interactive GPU node on the SCC.
+This means you can run jobs on the GPU from the command line and see
+the output in real time without having to go via the scheduler.
+
+Caveat: You cannot compile GPU code on the interactive node!
+        You must compile on the login node (a seperate terminal)
+	then run from the interactive terminal
+
+qrsh: request resources
+h_rt: hours:minutes:seconds run time
+-pe:  parallel environment, number of CPU requested
+-P:   project to charge
+gpus: number of GPUs per CPU's requested
+gpu_c:GPU compute capabilty
+
+qrsh -l h_rt=1:00:00 -pe omp 1 -P paralg -l gpus=1.0 -l gpu_c=6.0
