@@ -221,9 +221,9 @@ int main(int argc, char **argv) {
       //Diagnostics and observables
       //---------------------------------------------------------------------
       // 1. Try to keep the acceptance rate between 0.75 - 0.85. Do this by 
-      // varying the step size of the HMC integrator.
-      // 2. <exp(-dH)> should be ~1.0
-      // 3. <exp(-dH)> should be ~0.0, and ever so slightly positive.
+      //    varying the step size of the HMC integrator.
+      // 2. <exp(-dH)> should be ~1.0, and ever so slightly larger.
+      // 3. <dH> should be ~0.0, and ever so slightly positive.
       // 4. <phi>, <phi**2>, <phi**4> and the Binder cumulant depend on
       //    musqr and lambda.
       cout << "measurement " << measurement << endl;
