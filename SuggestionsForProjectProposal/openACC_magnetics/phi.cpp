@@ -24,7 +24,7 @@ Schaich Binder  = 0.524037
 
 My test value:  = 0.52032117573  and 0.521459040377
 
-With SW  = a0.520920506171
+With SW  = 0.520920506171
 
 */
 
@@ -1249,7 +1249,6 @@ void trajectory_serial(double mom[L][L], double phi[L][L], param_t p) {
     for(int x =0;x< L;x++)
       for(int y =0;y< L;y++)
 	phi[x][y] +=   mom[x][y] * p.dt;
->>>>>>> b6909d6eefcc84628143ff055c6746f725d20859
     
     for(int x=0; x<L; x++) {
       xp1 = (x+1)%L;
