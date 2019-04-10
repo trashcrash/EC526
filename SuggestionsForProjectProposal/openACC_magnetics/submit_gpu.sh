@@ -26,7 +26,7 @@
 # Immediately form fused output/error file, besides the one with the default name.
 exec >  ${SGE_O_WORKDIR}/${JOB_NAME}-${JOB_ID}.scc.out 2>&1
 
-pgprof ./phi
+./phi
 
 exit
 
